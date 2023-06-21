@@ -1,0 +1,93 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-family: 'Hind', sans-serif;
+    
+}
+::-webkit-scrollbar
+{
+    width: 5px;
+}
+::-webkit-scrollbar-track
+{
+    display: none;
+}
+::-webkit-scrollbar-thumb
+{
+    background: #888;
+    border-radius: 16px;
+}
+::-webkit-scrollbar-thumb:hover
+{
+    background: #555;
+}
+body
+{
+    overflow: hidden;
+    cursor: none;
+}
+.hiddenImage
+{
+    display: none;
+}
+.textureViewer
+{
+    width: 90%;
+    margin-left: 5%;
+    border: 4px #888 solid;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.textureViewer:hover
+{
+    border: 4px #666 solid;
+}
+.middle
+{
+    margin-left: 138px;
+}
+#ui
+{
+    position: fixed;
+    width: 350px;
+    height: 550px;
+    background-color: white;
+    cursor: default;
+    overflow-y: scroll;
+    border-radius: 0 0 32px 0;
+}
+h2
+{
+    text-align: center;
+    margin-bottom: 8px;
+}
+label
+{
+    text-align: center;
+    margin-left: 64px;
+}
+p
+{
+    margin-left: 24px;
+}
+input
+{
+    width: 32px;
+    height: 32px;
+    margin-left: 160px;
+    cursor: pointer;
+}
+select:hover
+{
+    background-color: #eee;
+    cursor: pointer;
+}
+button
+{
+    cursor: pointer;
+}
