@@ -1,5 +1,6 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
 import { GLTFLoader } from 'https://unpkg.com/three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'https://unpkg.com/three/examples/jsm/loaders/DRACOLoader'
 import { FirstPersonControls } from 'https://unpkg.com/three/examples/jsm/controls/FirstPersonControls.js';
 
 window.addEventListener('keydown', e =>
@@ -68,6 +69,11 @@ sun.castShadow = true;
 scene.add(sun);
 
 const glbLoader = new GLTFLoader();
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+
+glbLoader.setDRACOLoader(dracoLoader);
 
 /*glbLoader.load('Models/fan_bed.glb', function(model)
 {
