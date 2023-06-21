@@ -75,22 +75,32 @@ dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
 
 glbLoader.setDRACOLoader(dracoLoader);
 
-/*glbLoader.load('Models/fan_bed.glb', function(model)
+var ctxDiffuse = canvasTextureDiffuse.getContext('2d');
+ctxDiffuse.drawImage(cottonDiffuse, 0, 0);
+ctxDiffuse.fillStyle = '#fff';
+ctxDiffuse.fillRect(0, 0, 1024, 1024);
+var ctxNormal = canvasTextureNormal.getContext('2d');
+ctxNormal.drawImage(cottonNormal, 0, 0);
+
+let textureDiffuse = new THREE.CanvasTexture(canvasTextureDiffuse);
+let textureNormal = new THREE.CanvasTexture(canvasTextureNormal);
+
+var loadedModel;
+var loadedMaterial;
+
+glbLoader.load('Models/Minimalistic (by dylanheyes).glb', function(model)
 {
-    /*const canvas = document.createElement('canvas')
-    canvas.width = 128
-    canvas.height = 128
-    const context = canvas.getContext('2d')
-    context.fillStyle = '#ffffff'
-    context.fillRect(0, 0, 128, 128)
-    const texture = new THREE.CanvasTexture(canvas)
-    model.scene.traverse(function (child) {
-        if (child.isMesh) {
-            child.material.map = texture
+    let foundMaterial = false;
+    model.scene.traverse(function (child)
+    {
+        if (!foundMaterial && child.isMesh)
+        {
+            child.material.map = textureDiffuse;
+            child.material.normalMap = textureNormal;
+            foundMaterial = true;
+            loadedMaterial = child.material;
         }
-    })
-
-
+    });
 
     model.scene.receiveShadow = true;
     for(let i = 0; i < model.scene.children.length; i++)
@@ -99,87 +109,69 @@ glbLoader.setDRACOLoader(dracoLoader);
         //model.scene.children[i].castShadow = true;
     }
     scene.add(model.scene);
-    var bed = model;
-});*/
-
-var ctxDiffuse = canvasTextureDiffuse.getContext('2d');
-ctxDiffuse.drawImage(cottonDiffuse, 0, 0);
-ctxDiffuse.fillStyle = '#fff';
-ctxDiffuse.fillRect(0, 0, 1024, 1024);
-var ctxNormal = canvasTextureNormal.getContext('2d');
-ctxNormal.drawImage(cottonNormal, 0, 0);
+    loadedModel = model.scene;
+});
 
 function setMaterialNormals(type)
 {
+    canvasTextureNormal.setAttribute('width', 1024);
+    canvasTextureNormal.setAttribute('height', 1024);
     if(type == 'cotton')
         ctxNormal.drawImage(cottonNormal, 0, 0);
     else if(type == 'flannel')
         ctxNormal.drawImage(flannelNormal, 0, 0);
+    let textureNormal = new THREE.CanvasTexture(canvasTextureNormal);
+    loadedMaterial.normalMap = textureNormal;
 }
 canvasTextureDiffuse.addEventListener('click', () =>
 {
-    uploader.click();
+    uploaderDiffuse.click();
 });
 colorPicker.addEventListener('change', e =>
 {
     loadedMaterial.color = new THREE.Color(e.target.value);
 });
-uploader.addEventListener('change', e =>
+uploaderDiffuse.addEventListener('change', e =>
 {
     let importedImage = new Image();
-    const importedFile = uploader.files[0];
+    const importedFile = uploaderDiffuse.files[0];
     importedImage.src = URL.createObjectURL(importedFile);
     importedImage.onload = () =>
     {
+        canvasTextureDiffuse.setAttribute('width', importedImage.width);
+        canvasTextureDiffuse.setAttribute('height', importedImage.height);
         ctxDiffuse.drawImage(importedImage, 0, 0);
-        refreshBlanketTexture();
+        let textureDiffuse = new THREE.CanvasTexture(canvasTextureDiffuse);
+        loadedMaterial.map = textureDiffuse;
+    };
+});
+canvasTextureNormal.addEventListener('click', () =>
+{
+    uploaderNormal.click();
+});
+uploaderNormal.addEventListener('change', e =>
+{
+    let importedImage = new Image();
+    const importedFile = uploaderNormal.files[0];
+    importedImage.src = URL.createObjectURL(importedFile);
+    importedImage.onload = () =>
+    {
+        canvasTextureNormal.setAttribute('width', importedImage.width);
+        canvasTextureNormal.setAttribute('height', importedImage.height);
+        ctxNormal.drawImage(importedImage, 0, 0);
+        let textureNormal = new THREE.CanvasTexture(canvasTextureNormal);
+        loadedMaterial.normalMap = textureNormal;
     };
 });
 cottonBtn.addEventListener('click', () =>
 {
     setMaterialNormals('cotton');
-    refreshBlanketTexture();
 });
 flannelBtn.addEventListener('click', () =>
 {
     setMaterialNormals('flannel');
-    refreshBlanketTexture();
 });
-var loadedModel;
-var loadedMaterial;
-function refreshBlanketTexture()
-{
-    scene.remove(loadedModel);
 
-    let textureDiffuse = new THREE.CanvasTexture(canvasTextureDiffuse);
-    let textureNormal = new THREE.CanvasTexture(canvasTextureNormal);
-
-    glbLoader.load('Models/Minimalistic (by dylanheyes).glb', function(model)
-    {
-        let foundMaterial = false;
-        model.scene.traverse(function (child)
-        {
-            if (!foundMaterial && child.isMesh)
-            {
-                child.material.map = textureDiffuse;
-                child.material.normalMap = textureNormal;
-                foundMaterial = true;
-                loadedMaterial = child.material;
-            }
-        });
-
-        model.scene.receiveShadow = true;
-        for(let i = 0; i < model.scene.children.length; i++)
-        {
-            model.scene.children[i].receiveShadow = true;
-            //model.scene.children[i].castShadow = true;
-        }
-        scene.add(model.scene);
-        var loadedModel = model.scene;
-    });
-}
-
-refreshBlanketTexture();
 const firstPersonControls = new FirstPersonControls(camera, renderer.domElement);
 
 function animate() 
